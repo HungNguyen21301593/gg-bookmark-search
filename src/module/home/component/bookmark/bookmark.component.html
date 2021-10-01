@@ -1,5 +1,5 @@
 <form [formGroup]="bookmarkForm">
-  <input formControlName="searchText" type="text">
+  <input formControlName="searchText" type="text" (keyup)="onSearch()">
   <button (click)="onSearch()">Search</button>
-  <app-tree [inputRootNode]="rootNode"></app-tree>
+  <app-tree [inputRootNode]="displayTree"></app-tree>
 </form>
