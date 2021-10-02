@@ -31,10 +31,15 @@ export class BookmarkComponent implements OnInit {
   constructor(private treeService: TreeService) { }
 
   async ngOnInit() {
+    await this.loadTree();
+    await this.onSearch();
+  }
+
+  async loadTree()
+  {
     this.rootTree = await window.chrome.bookmarks.getTree();
     this.localClonedTree = JSON.parse(JSON.stringify(this.rootTree[0]));
     this.displayTreeView = this.mapToTreeView(this.localClonedTree.children[0]);
-    await this.onSearch();
   }
 
   async onSearch() {
@@ -65,6 +70,20 @@ export class BookmarkComponent implements OnInit {
       return name;
     }
     return name.slice(0, this.titleLimit) + "...";
+  }
+
+  allowDrop(event: any) {
+    event.preventDefault();
+  }
+
+  drag(event: any, node: any) {
+    event.dataTransfer.setData("text", node.id);
+  }
+
+  async drop(event: any, desNode: any) {
+    const srcNodeId = event.dataTransfer.getData("text");
+    window.chrome.bookmarks.move(srcNodeId, {parentId: desNode.id});
+    await this.loadTree();
   }
 }
 

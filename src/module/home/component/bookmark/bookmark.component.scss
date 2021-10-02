@@ -1,8 +1,10 @@
 .node-name{
-  align-items: flex-end !important;
-  display:  inline-flex !important;
-  padding: 5px 0px 5px 7px !important;
-  .name{
-    margin-left: 10px !important;
+  .node-name-container{
+    align-items: flex-end !important;
+    display:  inline-flex !important;
+    padding: 5px 0px 5px 7px !important;
+    .name{
+      margin-left: 10px !important;
+    }
   }
 }

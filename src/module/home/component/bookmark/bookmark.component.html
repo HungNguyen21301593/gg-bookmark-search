@@ -2,10 +2,13 @@
   <input formControlName="searchText" type="text" (keyup)="onSearch()">
   <tree-ngx [nodeItems]="displayTreeView" [filter]="filterText" [callbacks]="callbacks" [options]="options">
     <ng-template #nodeNameTemplate let-node="node" let-context="context">
-      <img *ngIf="node && node.item && node.item.url"
-        [src]="'https://s2.googleusercontent.com/s2/favicons?domain='+node.item.url">
-      <img *ngIf="!(node && node.item && node.item.url)" src="../images/Folder_Icon_16.png">
-      <span class="name" [class.active]="context.active">{{truncateNodeName(node.title)}}</span>
+      <div class="node-name-container" draggable="true" (dragstart)="drag($event, node)"
+      (drop)="drop($event, node)" (dragover)="allowDrop($event)">
+        <img *ngIf="node && node.item && node.item.url"
+          [src]="'https://s2.googleusercontent.com/s2/favicons?domain='+node.item.url">
+        <img *ngIf="!(node && node.item && node.item.url)" src="../images/Folder_Icon_16.png">
+        <span class="name" [class.active]="context.active" >{{truncateNodeName(node.title)}}</span>
+      </div>
     </ng-template>
   </tree-ngx>
 </form>
