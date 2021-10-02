@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~tree-ngx/style/ngx-tree.scss';
+.node-name{
+    align-items: flex-end !important;
+    display:  inline-flex !important;
+    padding: 5px 0px 5px 7px !important;
+    .name{
+      margin-left: 5px !important;
+      white-space: nowrap !important;
+    }
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }

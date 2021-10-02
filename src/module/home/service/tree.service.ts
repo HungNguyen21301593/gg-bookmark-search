@@ -13,18 +13,19 @@ export class TreeService {
   //   }
   // });
 
-  loopThroughTree(node: any, actionOnNode: (node: any) => any) {
+  loopThroughTree(node: any, actionOnRearNode: (node: any) => any, actionOnEachNode: (node: any) => any) {
+    actionOnEachNode(node);
     if (this.isRearNode(node)) {
-      return actionOnNode(node);
+      actionOnRearNode(node);
     } else {
       this.getAllChildrenNodes(node).forEach((node: any) => {
-        this.loopThroughTree(node, actionOnNode);
+        this.loopThroughTree(node, actionOnRearNode, actionOnEachNode);
       });
     }
   }
 
   private getAllChildrenNodes(node: any) {
-    if (!node) {return []};
+    if (!node) { return [] };
     return node.children;
   }
 
@@ -32,17 +33,13 @@ export class TreeService {
     return node !== undefined && (!(node.children) || node.children.length == 0);
   }
 
-  isTopNodeMatchedSearchText(subTree: any, searchText: string) {
-    return subTree && subTree.title && subTree.title.toString().toLowerCase().includes(searchText);
-  }
-
-  doesAnyChildrenNodeMatch(tree: any, searchText: string) {
-    let matchedNodeIds: any[] = [];
-    this.loopThroughTree(tree, (subTree: any) => {
-      if (!this.isTopNodeMatchedSearchText(subTree, searchText)) {
-        matchedNodeIds.push(subTree.id);
+  getParentById(rootTree: any, id: string): any {
+    let result: any[] = [];
+    this.loopThroughTree(rootTree, () => { }, (subtree: any) => {
+      if (subtree.id === id) {
+        result.push(subtree);
       }
-    });
-    return matchedNodeIds.length !== 0;
+    })
+    return result[0];
   }
 }

@@ -1,39 +1,66 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { TreeCallbacks, TreeMode, TreeOptions } from 'tree-ngx';
+import { NodeItem } from 'tree-ngx/src/model/node-item';
 import { TreeService } from '../../service/tree.service';
 
 @Component({
   selector: 'app-bookmark',
   templateUrl: './bookmark.component.html',
-  styleUrls: ['./bookmark.component.css']
+  styleUrls: ['./bookmark.component.scss']
 })
 export class BookmarkComponent implements OnInit {
   allNodes: any[] | undefined;
-  rootNode: any;
+  rootTree: any;
+  filterText!: string;
   bookmarkForm = new FormGroup({
     searchText: new FormControl('')
   });
-  displayTree: any;
+  localClonedTree: any;
+  displayTreeView: any;
+  titleLimit = 40;
+  callbacks: TreeCallbacks = {
+    nameClick: this.nameClick
+  };
+
+  options: TreeOptions = {
+    mode: TreeMode.SingleSelect,
+    checkboxes: false,
+    alwaysEmitSelected: false
+  };
   constructor(private treeService: TreeService) { }
 
   async ngOnInit() {
-    this.rootNode = await window.chrome.bookmarks.getTree();
-    this.displayTree = this.rootNode[0];
+    this.rootTree = await window.chrome.bookmarks.getTree();
+    await this.onSearch();
   }
 
   async onSearch() {
-    const searhText = this.bookmarkForm.value.searchText.toLowerCase();
-    this.displayTree = JSON.parse(JSON.stringify(this.rootNode[0]))
-    this.pruneTree(this.displayTree, searhText);
+    this.filterText = this.bookmarkForm.value.searchText.toLowerCase();
+    this.localClonedTree = JSON.parse(JSON.stringify(this.rootTree[0]));
+    this.displayTreeView = this.mapToTreeView(this.localClonedTree.children[0]);
   }
 
-  pruneTree(rootTree: any, searchText: string) {
-    this.treeService.loopThroughTree(rootTree, (subtree: any) => {
-      if (this.treeService.doesAnyChildrenNodeMatch(subtree, searchText)) {
-        subtree.title = undefined;
-        subtree.url = undefined;
-      }
+  mapToTreeView(rootTree: any) {
+    this.treeService.loopThroughTree(rootTree, () => { }, async (subtree: any) => {
+      const getParrent = this.treeService.getParentById(rootTree, subtree.parentId);
+      subtree.name = (getParrent ? getParrent.name : '') + subtree.title;
+      subtree.item = { url: subtree.url };
     });
+    return [rootTree];
+  }
+
+  nameClick(node: NodeItem<any>) {
+    if (node && node.item && node.item.url) {
+      window.open(node.item.url)
+    }
+  }
+
+  truncateNodeName(name: string) {
+    if (name.length < this.titleLimit) {
+      return name;
+    }
+    return name.slice(0, this.titleLimit) + "...";
   }
 }
 

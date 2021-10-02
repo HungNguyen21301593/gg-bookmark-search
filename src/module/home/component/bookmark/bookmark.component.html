@@ -1,5 +1,11 @@
-<form [formGroup]="bookmarkForm">
+<form style="width: 500px;scrollbar-width: none;" [formGroup]="bookmarkForm" class="custom-tree">
   <input formControlName="searchText" type="text" (keyup)="onSearch()">
-  <button (click)="onSearch()">Search</button>
-  <app-tree [inputRootNode]="displayTree"></app-tree>
+  <tree-ngx [nodeItems]="displayTreeView" [filter]="filterText" [callbacks]="callbacks" [options]="options">
+    <ng-template #nodeNameTemplate let-node="node" let-context="context">
+      <img *ngIf="node && node.item && node.item.url"
+        [src]="'https://s2.googleusercontent.com/s2/favicons?domain='+node.item.url">
+      <img *ngIf="!(node && node.item && node.item.url)" src="../images/Folder_Icon_16.png">
+      <span class="name" [class.active]="context.active">{{truncateNodeName(node.title)}}</span>
+    </ng-template>
+  </tree-ngx>
 </form>
