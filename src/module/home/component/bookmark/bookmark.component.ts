@@ -32,13 +32,17 @@ export class BookmarkComponent implements OnInit {
 
   async ngOnInit() {
     this.rootTree = await window.chrome.bookmarks.getTree();
+    this.localClonedTree = JSON.parse(JSON.stringify(this.rootTree[0]));
+    this.displayTreeView = this.mapToTreeView(this.localClonedTree.children[0]);
     await this.onSearch();
   }
 
   async onSearch() {
-    this.filterText = this.bookmarkForm.value.searchText.toLowerCase();
-    this.localClonedTree = JSON.parse(JSON.stringify(this.rootTree[0]));
-    this.displayTreeView = this.mapToTreeView(this.localClonedTree.children[0]);
+    const text = this.bookmarkForm.value.searchText.toLowerCase();
+    if (text === this.filterText) {
+      return;
+    }
+    this.filterText = text;
   }
 
   mapToTreeView(rootTree: any) {
