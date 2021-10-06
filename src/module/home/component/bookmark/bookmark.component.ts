@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ContextMenuComponent } from 'ngx-contextmenu';
 import { TreeCallbacks, TreeMode, TreeOptions } from 'tree-ngx';
 import { NodeItem } from 'tree-ngx/src/model/node-item';
 import { TreeService } from '../../service/tree.service';
@@ -22,6 +23,15 @@ export class BookmarkComponent implements OnInit {
   callbacks: TreeCallbacks = {
     nameClick: this.nameClick
   };
+  public items = [
+    { name: 'John', otherProperty: 'Foo' },
+    { name: 'Joe', otherProperty: 'Bar' }
+  ];
+  @ViewChild(ContextMenuComponent) public basicMenu!: ContextMenuComponent;
+
+  showMessage(message: any) {
+    console.log(message);
+  }
 
   options: TreeOptions = {
     mode: TreeMode.SingleSelect,
@@ -31,22 +41,18 @@ export class BookmarkComponent implements OnInit {
   constructor(private treeService: TreeService) { }
 
   async ngOnInit() {
-    await this.loadTree();
-    await this.onSearch();
+    await this.reloadTree();
   }
 
-  async loadTree()
-  {
+  async reloadTree() {
     this.rootTree = await window.chrome.bookmarks.getTree();
     this.localClonedTree = JSON.parse(JSON.stringify(this.rootTree[0]));
     this.displayTreeView = this.mapToTreeView(this.localClonedTree.children[0]);
+    this.onSearch();
   }
 
   async onSearch() {
     const text = this.bookmarkForm.value.searchText.toLowerCase();
-    if (text === this.filterText) {
-      return;
-    }
     this.filterText = text;
   }
 
@@ -61,7 +67,7 @@ export class BookmarkComponent implements OnInit {
 
   nameClick(node: NodeItem<any>) {
     if (node && node.item && node.item.url) {
-      window.open(node.item.url)
+      window.open(node.item.url, "_blank")
     }
   }
 
@@ -81,9 +87,28 @@ export class BookmarkComponent implements OnInit {
   }
 
   async drop(event: any, desNode: any) {
+    if (desNode.url) {
+      return;
+    }
     const srcNodeId = event.dataTransfer.getData("text");
-    window.chrome.bookmarks.move(srcNodeId, {parentId: desNode.id});
-    await this.loadTree();
+    window.chrome.bookmarks.move(srcNodeId, { parentId: desNode.id });
+    this.reloadTree();
+  }
+
+  updateNode(item: any) {
+    if (item.url && item.newUrl !== item.url) {
+      window.chrome.bookmarks.update(item.id, { url: item.newUrl })
+      item.url = item.newUrl;
+    }
+    if (item.newTitle && item.newTitle !== item.title) {
+      window.chrome.bookmarks.update(item.id, { title: item.newTitle })
+      item.title = item.newTitle;
+    }
+  }
+
+  sidemenuOpenned(event: any) {
+    event.item.newTitle = event.item.title;
+    event.item.newUrl = event.item.url;
   }
 }
 

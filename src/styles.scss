@@ -13,3 +13,11 @@
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
   }
+
+.dropdown-menu {
+    background-color: rgb(24, 24, 21);
+  }
+  .mystyle .dropdown-menu>li>a:focus, .mystyle .dropdown-menu>li>a:hover {
+    color: white;
+    background-color: black;
+  }

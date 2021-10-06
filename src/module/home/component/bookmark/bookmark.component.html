@@ -1,14 +1,28 @@
+
+
 <form style="width: 500px;scrollbar-width: none;" [formGroup]="bookmarkForm" class="custom-tree">
-  <input formControlName="searchText" type="text" (keyup)="onSearch()">
+  <input formControlName="searchText" type="text" (keyup)="onSearch()" autofocus>
   <tree-ngx [nodeItems]="displayTreeView" [filter]="filterText" [callbacks]="callbacks" [options]="options">
     <ng-template #nodeNameTemplate let-node="node" let-context="context">
-      <div class="node-name-container" draggable="true" (dragstart)="drag($event, node)"
-      (drop)="drop($event, node)" (dragover)="allowDrop($event)">
+      <div class="node-name-container" draggable="true" (dragstart)="drag($event, node)" (drop)="drop($event, node)"
+        (dragover)="allowDrop($event)" [contextMenu]="basicMenu" [contextMenuSubject]="node">
         <img *ngIf="node && node.item && node.item.url"
           [src]="'https://s2.googleusercontent.com/s2/favicons?domain='+node.item.url">
         <img *ngIf="!(node && node.item && node.item.url)" src="../images/Folder_Icon_16.png">
-        <span class="name" [class.active]="context.active" >{{truncateNodeName(node.title)}}</span>
+        <span class="name" [class.active]="context.active" tabindex="0">{{truncateNodeName(node.title)}}</span>
       </div>
     </ng-template>
   </tree-ngx>
 </form>
+
+<context-menu (open)="sidemenuOpenned($event)">
+  <ng-template contextMenuItem let-item [passive]=true>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <input fxLayoutAlign="center start" type="text" [placeholder]="item.title" [(ngModel)]="item.newTitle" [value]="item.newTitle">
+      <input fxLayoutAlign="center start" *ngIf="item.url" type="text" [placeholder]="item.url" [(ngModel)]="item.newUrl" [value]="item.newUrl">
+      <button fxLayoutAlign="center start" (click)="updateNode(item)">
+        <i class="fa fa-angle-double-right"></i>
+      </button>
+    </div>
+  </ng-template>
+</context-menu>
