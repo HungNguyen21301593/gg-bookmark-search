@@ -21,12 +21,8 @@ export class BookmarkComponent implements OnInit {
   displayTreeView: any;
   titleLimit = 40;
   callbacks: TreeCallbacks = {
-    nameClick: this.nameClick
+    nameClick: this.nodeNameClick
   };
-  public items = [
-    { name: 'John', otherProperty: 'Foo' },
-    { name: 'Joe', otherProperty: 'Bar' }
-  ];
   @ViewChild(ContextMenuComponent) public basicMenu!: ContextMenuComponent;
 
   showMessage(message: any) {
@@ -56,6 +52,11 @@ export class BookmarkComponent implements OnInit {
     this.filterText = text;
   }
 
+  voiceSearchTextDetected(searchText: any) {
+    this.bookmarkForm.setValue({ searchText: searchText });
+    this.filterText = searchText;
+  }
+
   mapToTreeView(rootTree: any) {
     this.treeService.loopThroughTree(rootTree, () => { }, async (subtree: any) => {
       const getParrent = this.treeService.getParentById(rootTree, subtree.parentId);
@@ -65,10 +66,14 @@ export class BookmarkComponent implements OnInit {
     return [rootTree];
   }
 
-  nameClick(node: NodeItem<any>) {
+  nodeNameClick(node: NodeItem<any>) {
     if (node && node.item && node.item.url) {
-      window.open(node.item.url, "_blank")
+      window.open(node.item.url, "_blank");
     }
+  }
+
+  nodeNameEntered(url: string) {
+    window.open(url, "_blank");
   }
 
   truncateNodeName(name: string) {

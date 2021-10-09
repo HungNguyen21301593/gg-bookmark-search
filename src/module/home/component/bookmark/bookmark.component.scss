@@ -1,10 +1,20 @@
-.node-name{
-  .node-name-container{
-    align-items: flex-end !important;
-    display:  inline-flex !important;
-    padding: 5px 0px 5px 7px !important;
-    .name{
-      margin-left: 10px !important;
+form{
+  width: 500px;
+  scrollbar-width: none;
+  input{
+    margin-left: 10px;border-radius: 5px;
+  }
+  .node-name{
+    .node-name-container{
+      align-items: flex-end !important;
+      display:  inline-flex !important;
+      padding: 5px 0px 5px 7px !important;
+      .icon{
+        height: 10px;
+      }
+      .name{
+        margin-left: 10px !important;
+      }
     }
   }
 }

@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TreeNgxModule } from 'tree-ngx';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { VoiceRecorderComponent } from './component/voice-recorder/voice-recorder.component';
 
 @NgModule({
   imports: [
@@ -16,7 +17,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FormsModule,
     FlexLayoutModule
   ],
-  declarations: [HomeComponent, BookmarkComponent],
+  declarations: [HomeComponent, BookmarkComponent, VoiceRecorderComponent],
   exports: [BookmarkComponent, HomeComponent]
 })
 export class HomeModule { }
