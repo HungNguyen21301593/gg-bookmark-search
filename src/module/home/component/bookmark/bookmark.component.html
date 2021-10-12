@@ -1,8 +1,9 @@
 
 
 <form [formGroup]="bookmarkForm" class="custom-tree">
-  <input formControlName="searchText" type="text" (keyup)="onSearch()" autofocus>
-  <app-voice-recorder (searchtextRecognized)="voiceSearchTextDetected($event)"></app-voice-recorder>
+  <div class="header">
+    <input formControlName="searchText" type="text" (keyup)="onSearch()" autofocus>
+  </div>
   <tree-ngx [nodeItems]="displayTreeView" [filter]="filterText" [callbacks]="callbacks" [options]="options">
     <ng-template #nodeNameTemplate let-node="node" let-context="context">
       <div class="node-name-container" draggable="true" (dragstart)="drag($event, node)" (drop)="drop($event, node)"

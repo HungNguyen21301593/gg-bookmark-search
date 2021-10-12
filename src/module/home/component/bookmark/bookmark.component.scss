@@ -1,6 +1,12 @@
 form{
-  width: 500px;
+  width: 800px;
+  height: 800px;
   scrollbar-width: none;
+  .header{
+    position: fixed;
+    right: 10px;
+    top: 10px;
+  }
   input{
     margin-left: 10px;border-radius: 5px;
   }
